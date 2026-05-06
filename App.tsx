@@ -1,5 +1,6 @@
 import Navigation from "@/navigation"
 import theme from "@/utils/theme"
+import ErrorBoundary from "@/shared/components/ErrorBoundary"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { NavigationContainer } from "@react-navigation/native"
 import { ThemeProvider } from "@shopify/restyle"
@@ -16,11 +17,13 @@ export default function App() {
     >
       <ThemeProvider theme={theme}>
         <SafeAreaProvider>
-          <BottomSheetModalProvider>
-            <NavigationContainer>
-              <Navigation />
-            </NavigationContainer>
-          </BottomSheetModalProvider>
+          <ErrorBoundary>
+            <BottomSheetModalProvider>
+              <NavigationContainer>
+                <Navigation />
+              </NavigationContainer>
+            </BottomSheetModalProvider>
+          </ErrorBoundary>
         </SafeAreaProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
