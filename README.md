@@ -14,6 +14,8 @@ Rabbit Habit habit tracking Progressive Web Application.
 ## TODO
 
 ## Description
+<img width="3413" height="1849" alt="image" src="https://github.com/user-attachments/assets/da97ca42-01c3-4542-930c-af75a18d8807" />
+
 ![rabit-habit-v2](https://user-images.githubusercontent.com/101916187/208200436-69a4aca9-c555-4ccd-8dc2-833210714aeb.png)
 
 ## Installation
