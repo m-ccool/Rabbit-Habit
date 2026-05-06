@@ -1,5 +1,5 @@
-# Rabit Habit v2
-(Formally Rabit Habit) Rabit Habit habbit tracking Progressive Web Application
+# Rabit Habit
+Rabit Habit habbit tracking Progressive Web Application
 
 ## Table of Contents
 
