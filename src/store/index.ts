@@ -1,73 +1,106 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+
 /**
- * 1. Interface IGlobalStore
- * 2. create
- * 3. persist with async from react-native-async-storage
+ * Global store
+ * - persisted via AsyncStorage (zustand persist middleware)
+ * - version-gated with a migrate() for forward-compatible schema changes
+ * - tracks rehydration state so UI can show skeletons on cold start
  */
 
 interface IGlobalStore {
+  // ── data ──────────────────────────────────────────────────────────────────
   categories: ICategory[]
   tasks: ITask[]
-  addTask: (task: ITask) => void
-  addCategory: (category: ICategory) => void
-  updateTasks: (tasks: ITask[]) => void
   selectedCategory: null | ICategory
-  updateSelectedCategory: (category: ICategory) => void
+
+  // ── loading flags ─────────────────────────────────────────────────────────
+  _hasHydrated: boolean
+  isCreatingTask: boolean
+  isDeletingTask: boolean
+
+  // ── actions ───────────────────────────────────────────────────────────────
+  setHasHydrated: (val: boolean) => void
+  setIsCreatingTask: (val: boolean) => void
+  setIsDeletingTask: (val: boolean) => void
+
+  addTask: (task: ITask) => void
+  updateTasks: (tasks: ITask[]) => void
   toggleTaskStatus: (task: ITask) => void
+  deleteTask: (taskId: string) => void
+
+  addCategory: (category: ICategory) => void
+  deleteCategory: (categoryId: string) => void
+  updateSelectedCategory: (category: ICategory) => void
 }
 
 const useGlobalStore = create<IGlobalStore>()(
   persist(
     (set, get) => ({
+      // ── initial state ──────────────────────────────────────────────────────
       categories: [],
       tasks: [],
       selectedCategory: null,
-      addTask: (task) => {
-        const { tasks } = get()
-        const updatedTasks = [...tasks, task]
-        set({
-          tasks: updatedTasks,
-        })
+      _hasHydrated: false,
+      isCreatingTask: false,
+      isDeletingTask: false,
+
+      // ── loading setters ───────────────────────────────────────────────────
+      setHasHydrated: (val) => set({ _hasHydrated: val }),
+      setIsCreatingTask: (val) => set({ isCreatingTask: val }),
+      setIsDeletingTask: (val) => set({ isDeletingTask: val }),
+
+      // ── task actions ──────────────────────────────────────────────────────
+      addTask: (task) => set({ tasks: [...get().tasks, task] }),
+
+      updateTasks: (updatedTasks) => set({ tasks: updatedTasks }),
+
+      toggleTaskStatus: (task) => {
+        const updatedTasks = get().tasks.map((t) =>
+          t.id === task.id ? { ...task, completed: !task.completed } : t
+        )
+        set({ tasks: updatedTasks })
       },
-      updateTasks: (updatedTasks) => {
-        set({
-          tasks: updatedTasks,
-        })
-      },
-      updateSelectedCategory: (category) => {
-        set({
-          selectedCategory: category,
-        })
-      },
-      addCategory: (category) => {
-        const { categories } = get()
-        const updatedCategories = [...categories, category]
+
+      deleteTask: (taskId) =>
+        set({ tasks: get().tasks.filter((t) => t.id !== taskId) }),
+
+      // ── category actions ──────────────────────────────────────────────────
+      addCategory: (category) =>
+        set({ categories: [...get().categories, category] }),
+
+      deleteCategory: (categoryId) => {
+        const { categories, tasks, selectedCategory } = get()
+        const updatedCategories = categories.filter((c) => c.id !== categoryId)
+        // cascade-delete all tasks belonging to the removed category
+        const updatedTasks = tasks.filter((t) => t.category_id !== categoryId)
+        // clear selectedCategory if it was the deleted one
+        const updatedSelected =
+          selectedCategory?.id === categoryId ? null : selectedCategory
         set({
           categories: updatedCategories,
-        })
-      },
-      toggleTaskStatus: (task: ITask) => {
-        const { tasks } = get()
-        const updatedTasks = tasks.map((taskItem) => {
-          if (taskItem.id === task.id) {
-            return {
-              ...task,
-              completed: !task.completed,
-            }
-          } else {
-            return taskItem
-          }
-        })
-        set({
           tasks: updatedTasks,
+          selectedCategory: updatedSelected,
         })
       },
+
+      updateSelectedCategory: (category) =>
+        set({ selectedCategory: category }),
     }),
     {
       name: "todos-store",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: (persistedState, version) => {
+        // Placeholder for future migrations.
+        // version 0 → 1: no structural changes needed yet.
+        return persistedState as IGlobalStore
+      },
+      onRehydrateStorage: () => (state) => {
+        // Called once rehydration is complete (or failed).
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
