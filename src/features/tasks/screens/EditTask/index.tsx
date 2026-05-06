@@ -3,15 +3,14 @@ import useGlobalStore from "@/store"
 import { Box, Text } from "@/shared/utils/theme"
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 import React, { useState } from "react"
-import { ActivityIndicator, Pressable } from "react-native"
+import { Pressable } from "react-native"
 import FormInput from "@/shared/components/FormInput"
 import CategoryPickerField from "../../components/CategoryPickerField"
 
 type EditTaskRoute = RouteProp<RootStackParamList, "EditTask">
 
 const EditTask = () => {
-  const { categories, updateTasks, tasks, isDeletingTask, setIsDeletingTask } =
-    useGlobalStore()
+  const { categories, updateTasks, tasks } = useGlobalStore()
   const navigation = useNavigation()
   const { params } = useRoute<EditTaskRoute>()
 
@@ -26,10 +25,8 @@ const EditTask = () => {
   }
 
   const handleDeleteTask = () => {
-    setIsDeletingTask(true)
     const updatedTasks = tasks.filter((t) => t.id !== editedTask.id)
     updateTasks(updatedTasks)
-    setIsDeletingTask(false)
     navigation.navigate("Home")
   }
 
@@ -71,17 +68,12 @@ const EditTask = () => {
         >
           <Pressable
             onPress={handleDeleteTask}
-            disabled={isDeletingTask}
             accessibilityRole="button"
             accessibilityLabel="Delete task"
           >
-            {isDeletingTask ? (
-              <ActivityIndicator color="#bfdbfe" />
-            ) : (
-              <Text variant="textXl" color="blu200">
-                Delete
-              </Text>
-            )}
+            <Text variant="textXl" color="blu200">
+              Delete
+            </Text>
           </Pressable>
         </Box>
 

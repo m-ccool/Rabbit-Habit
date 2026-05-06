@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import { Animated, StyleSheet, View, ViewStyle } from "react-native"
+import { Animated, StyleSheet, ViewStyle } from "react-native"
 
 interface ShimmerBoxProps {
   style?: ViewStyle
@@ -13,7 +13,7 @@ export const ShimmerBox = ({ style }: ShimmerBoxProps) => {
   const anim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(anim, {
           toValue: 1,
@@ -26,7 +26,9 @@ export const ShimmerBox = ({ style }: ShimmerBoxProps) => {
           useNativeDriver: true,
         }),
       ])
-    ).start()
+    )
+    animation.start()
+    return () => animation.stop()
   }, [anim])
 
   const opacity = anim.interpolate({

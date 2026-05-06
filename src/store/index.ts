@@ -93,8 +93,8 @@ const useGlobalStore = create<IGlobalStore>()(
       storage: createJSONStorage(() => AsyncStorage),
       version: 1,
       migrate: (persistedState, version) => {
-        // Placeholder for future migrations.
-        // version 0 → 1: no structural changes needed yet.
+        // Add future migrations here as version increments.
+        // e.g. version 1 → 2: transform persistedState fields as needed.
         return persistedState as IGlobalStore
       },
       onRehydrateStorage: () => (state) => {

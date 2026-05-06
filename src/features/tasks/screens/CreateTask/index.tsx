@@ -3,18 +3,12 @@ import { Box, Text } from "@/shared/utils/theme"
 import { useNavigation } from "@react-navigation/native"
 import { nanoid } from "nanoid/non-secure"
 import React, { useState } from "react"
-import { ActivityIndicator, Pressable } from "react-native"
+import { Pressable } from "react-native"
 import FormInput from "@/shared/components/FormInput"
 import CategoryPickerField from "../../components/CategoryPickerField"
 
 const CreateTask = () => {
-  const {
-    categories,
-    selectedCategory,
-    addTask,
-    isCreatingTask,
-    setIsCreatingTask,
-  } = useGlobalStore()
+  const { categories, selectedCategory, addTask } = useGlobalStore()
   const navigation = useNavigation()
 
   const [newTask, setNewTask] = useState<ITask>({
@@ -26,9 +20,7 @@ const CreateTask = () => {
 
   const handleCreateTask = () => {
     if (!newTask.name.trim()) return
-    setIsCreatingTask(true)
     addTask(newTask)
-    setIsCreatingTask(false)
     navigation.navigate("Home")
   }
 
@@ -69,17 +61,12 @@ const CreateTask = () => {
         >
           <Pressable
             onPress={handleCreateTask}
-            disabled={isCreatingTask}
             accessibilityRole="button"
             accessibilityLabel="Create task"
           >
-            {isCreatingTask ? (
-              <ActivityIndicator color="#bfdbfe" />
-            ) : (
-              <Text variant="textXl" color="blu200">
-                Create
-              </Text>
-            )}
+            <Text variant="textXl" color="blu200">
+              Create
+            </Text>
           </Pressable>
         </Box>
       </Box>
