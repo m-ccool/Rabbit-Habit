@@ -25,14 +25,14 @@ const FloatingActionButton = () => {
         accessibilityLabel="Create new task"
       >
         <Box
-          bg="gray200"
+          bg="pink500"
           width={64}
           height={64}
           alignItems="center"
           justifyContent="center"
-          borderRadius="roundedXl"
+          borderRadius="roundedFull"
         >
-          <MaterialCommunityIcons name="plus" size={40} color="black" />
+          <MaterialCommunityIcons name="plus" size={40} color="#ffffff" />
         </Box>
       </Pressable>
     </Box>

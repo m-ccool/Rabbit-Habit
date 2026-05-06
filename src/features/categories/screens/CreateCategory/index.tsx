@@ -34,7 +34,7 @@ const CreateCategory = () => {
   }
 
   return (
-    <Box flex={1} bg="gray200" pb="10">
+    <Box flex={1} bg="dark900" pb="10">
       <Box flex={1} flexDirection="column" justifyContent="space-between" mx="3">
         <Box flexDirection="column" width="100%">
           <Box mt="5">
@@ -56,7 +56,8 @@ const CreateCategory = () => {
               }
             }}
             style={{
-              backgroundColor: theme.colors.white,
+              backgroundColor: theme.colors.dark700,
+              color: "#ffffff",
               borderRadius: 16,
             }}
           >

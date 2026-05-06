@@ -25,7 +25,7 @@ const CreateTask = () => {
   }
 
   return (
-    <Box flex={1} bg="gray100" p="4" pb="10">
+    <Box flex={1} bg="dark900" p="4" pb="10">
       <Box flexDirection="column" alignItems="center" justifyContent="space-between">
         <Box
           width="100%"

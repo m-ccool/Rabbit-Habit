@@ -30,7 +30,7 @@ const CategoryItem = ({ bottomSheetRef, category }: CategoryItemProps) => {
     >
       <Box
         p="4"
-        bg={selectedCategory?.id === category.id ? "blu200" : "gray100"}
+        bg={selectedCategory?.id === category.id ? "dark600" : "dark800"}
         borderRadius="roundedXl"
         flexDirection="row"
         alignItems="center"

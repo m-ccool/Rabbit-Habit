@@ -54,14 +54,14 @@ const CategoryFilterSheet = ({ bottomSheetRef }: CategoryFilterSheetProps) => {
           accessibilityLabel="Add category"
         >
           <Box
-            bg="gray100"
+            bg="dark600"
             width={64}
             height={64}
-            borderRadius="roundedXl"
+            borderRadius="roundedFull"
             alignItems="center"
             justifyContent="center"
           >
-            <MaterialCommunityIcons name="plus" size={40} color="black" />
+            <MaterialCommunityIcons name="plus" size={40} color="#ffffff" />
           </Box>
         </Pressable>
       </Box>

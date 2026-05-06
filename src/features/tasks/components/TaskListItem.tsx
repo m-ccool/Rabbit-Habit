@@ -19,7 +19,7 @@ const TaskListItem = ({ task }: TaskListItemProps) => {
   const { toggleTaskStatus } = useGlobalStore()
 
   return (
-    <Box bg="white" borderRadius="rounded2Xl" flex={1} my="2" mx="2">
+    <Box bg="dark800" borderRadius="rounded2Xl" flex={1} my="2" mx="2">
       <Box
         flexDirection="row"
         alignItems="center"

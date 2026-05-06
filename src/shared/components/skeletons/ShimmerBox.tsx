@@ -43,7 +43,7 @@ export const ShimmerBox = ({ style }: ShimmerBoxProps) => {
 
 const styles = StyleSheet.create({
   shimmer: {
-    backgroundColor: "#e5e7eb",
+    backgroundColor: "#2a2a2e",
     borderRadius: 8,
   },
 })

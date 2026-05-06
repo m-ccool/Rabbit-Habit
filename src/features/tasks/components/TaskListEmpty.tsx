@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 const TaskListEmpty = () => {
   return (
     <Box flex={1} alignItems="center" justifyContent="center" mt="10">
-      <MaterialCommunityIcons name="checkbox-blank-outline" size={64} color="#d1d5db" />
+      <MaterialCommunityIcons name="checkbox-blank-outline" size={64} color="#3a3a46" />
       <Text variant="text2Xl" mt="4" color="gray200">
         No tasks yet
       </Text>

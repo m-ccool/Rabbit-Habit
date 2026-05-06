@@ -20,7 +20,7 @@ const TaskSkeleton = () => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#1e1e21",
     borderRadius: 16,
     marginVertical: 8,
     marginHorizontal: 8,

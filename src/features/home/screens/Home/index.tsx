@@ -18,13 +18,19 @@ const Home = () => {
   }
 
   return (
-    <Box flex={1} bg="gray100">
+    <Box flex={1} bg="dark900">
       <HomeHeader bottomSheetRef={bottomSheetRef} />
 
       <Box height={20} />
       <TaskList />
 
-      <BottomSheetModal ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        backgroundStyle={{ backgroundColor: "#1e1e21" }}
+        handleIndicatorStyle={{ backgroundColor: "#6b7280" }}
+      >
         <CategoryFilterSheet bottomSheetRef={bottomSheetRef} />
       </BottomSheetModal>
 

@@ -9,7 +9,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const Navigation = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1e1e21" },
+        headerTintColor: "#ffffff",
+        headerTitleStyle: { color: "#ffffff" },
+        contentStyle: { backgroundColor: "#111113" },
+      }}
+    >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="CreateTask" component={CreateTask} />
       <Stack.Screen name="EditTask" component={EditTask} />

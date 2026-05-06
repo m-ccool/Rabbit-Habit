@@ -39,7 +39,7 @@ const HomeHeader = ({ bottomSheetRef }: HomeHeaderProps) => {
         accessibilityRole="button"
         accessibilityLabel="Filter by category"
       >
-        <Ionicons size={32} name="ios-filter" />
+        <Ionicons size={32} name="ios-filter" color="#ffffff" />
       </Pressable>
     </Box>
   )

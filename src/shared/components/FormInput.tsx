@@ -13,13 +13,13 @@ const FormInput = ({ label, style, ...rest }: FormInputProps) => {
   return (
     <Box width="100%">
       {label ? (
-        <Text variant="textBase" mb="2" color="gray900">
+        <Text variant="textBase" mb="2" color="white">
           {label}
         </Text>
       ) : null}
       <Box
         width="100%"
-        bg="white"
+        bg="dark700"
         borderRadius="rounded2Xl"
         alignItems="center"
         justifyContent="center"
@@ -27,7 +27,7 @@ const FormInput = ({ label, style, ...rest }: FormInputProps) => {
       >
         <TextInput
           style={[styles.input, style]}
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor="#6b7280"
           {...rest}
         />
       </Box>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 20,
     width: "100%",
-    color: "#111827",
+    color: "#ffffff",
   },
 })
 

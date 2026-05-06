@@ -25,6 +25,12 @@ export const palette = {
   pink600: "#db2777",
   rose400: "#fb7185",
   rose500: "#f43f5e",
+
+  // Dark theme
+  dark900: "#111113",
+  dark800: "#1e1e21",
+  dark700: "#2a2a2e",
+  dark600: "#3a3a46",
 }
 
 export const colors = {
@@ -44,4 +50,8 @@ export const colors = {
   pink500: palette.pink500,
   rose400: palette.rose400,
   rose500: palette.rose500,
+  dark900: palette.dark900,
+  dark800: palette.dark800,
+  dark700: palette.dark700,
+  dark600: palette.dark600,
 }
