@@ -1,5 +1,5 @@
-# Rabit Habit
-Rabit Habit habbit tracking Progressive Web Application
+# Rabbit Habit
+Rabbit Habit habit tracking Progressive Web Application.
 
 ## Table of Contents
 
@@ -25,7 +25,20 @@ Rabit Habit habbit tracking Progressive Web Application
 ## Guidelines
 
 ## Deploy Instructions
-Visit **[ m-ccool.github.io/Rabit-Habit-v2/ ]([https://fitndex.com](https://m-ccool.github.io/Rabit-Habit-v2/))**
+
+This repo is configured to deploy the Expo web build to GitHub Pages from `main`.
+
+Expected site URL:
+https://m-ccool.github.io/Rabbit-Habit/
+
+### First-time Pages setup
+
+1. In GitHub, open the repository settings.
+2. Go to Pages.
+3. Set the source to GitHub Actions.
+4. Push the current `main` branch.
+
+The workflow at `.github/workflows/deploy-pages.yml` will run `npm ci`, export the Expo web app, and publish the `web-build/` output to Pages.
 
 ## License
 ## Authors
