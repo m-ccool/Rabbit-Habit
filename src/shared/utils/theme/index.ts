@@ -18,11 +18,11 @@ const baseTheme = {
     "10": 40,
   },
   borderRadii: {
-    rounded: 4,
-    roundedXl: 8,
-    rounded2Xl: 16,
-    rounded3Xl: 24,
-    rounded4Xl: 32,
+    rounded:     6,
+    roundedXl:  10,
+    rounded2Xl: 14,
+    rounded3Xl: 20,
+    rounded4Xl: 28,
     roundedFull: 9999,
   },
 }
@@ -44,6 +44,7 @@ export const lightTheme = createTheme({
     dark700: palette.light700,
     dark600: palette.light600,
     gray200: "#6b7280",
+    separator: "#d1d5db",
     foreground: palette.foregroundLight,
   },
 })

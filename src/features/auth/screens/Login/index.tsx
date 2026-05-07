@@ -1,12 +1,9 @@
 import useGlobalStore from "@/store"
-import { Box, Text } from "@/shared/utils/theme"
-import { useNavigation } from "@react-navigation/native"
 import React, { useState } from "react"
-import { Pressable, StyleSheet, TextInput } from "react-native"
+import { Pressable, StyleSheet, TextInput, View, Text as RNText } from "react-native"
 
 const Login = () => {
   const { login } = useGlobalStore()
-  const navigation = useNavigation()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
@@ -16,29 +13,23 @@ const Login = () => {
   }
 
   return (
-    <Box flex={1} bg="dark900" alignItems="center" justifyContent="center" px="6">
-      {/* Title */}
-      <Text variant="text4Xl" style={styles.title}>
-        RABBIT HABIT
-      </Text>
-      <Text variant="textBase" color="gray200" style={{ marginBottom: 8 }}>
-        habit tracker
-      </Text>
-
-      {/* Mascots */}
-      <Text style={styles.mascots}>🥕 🐇</Text>
+    <View style={styles.root}>
+      {/* Logo + title */}
+      <View style={styles.header}>
+        <RNText style={styles.mascots}>🥕 🐇</RNText>
+        <RNText style={styles.title}>RABBIT HABIT</RNText>
+        <RNText style={styles.subtitle}>habit tracker</RNText>
+      </View>
 
       {/* Community stat */}
-      <Text variant="textLg" style={styles.carrots}>
-        34,234 CARROTS GROWN
-      </Text>
+      <RNText style={styles.carrots}>34,234 CARROTS GROWN</RNText>
 
-      {/* Email input */}
-      <Box width="100%" bg="dark700" borderRadius="rounded3Xl" mb="4" px="4" py="3">
+      {/* Form */}
+      <View style={styles.form}>
         <TextInput
           style={styles.input}
           placeholder="email@test.com"
-          placeholderTextColor="#6b7280"
+          placeholderTextColor="#636366"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -46,73 +37,102 @@ const Login = () => {
           textContentType="emailAddress"
           autoComplete="email"
         />
-      </Box>
-
-      {/* Password input */}
-      <Box width="100%" bg="dark700" borderRadius="rounded3Xl" mb="6" px="4" py="3">
         <TextInput
           style={styles.input}
           placeholder="password"
-          placeholderTextColor="#6b7280"
+          placeholderTextColor="#636366"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           textContentType="password"
           autoComplete="password"
         />
-      </Box>
 
-      {/* Login button */}
-      <Pressable onPress={handleLogin} style={styles.button} accessibilityRole="button">
-        <Text variant="textXl" style={styles.buttonText}>
-          log in
-        </Text>
-      </Pressable>
+        <Pressable
+          onPress={handleLogin}
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          accessibilityRole="button"
+        >
+          <RNText style={styles.buttonText}>log in</RNText>
+        </Pressable>
+      </View>
 
-      {/* GitHub link icon */}
-      <Text style={styles.github}>⬡</Text>
-    </Box>
+      {/* Footer */}
+      <RNText style={styles.github}>⬡  github</RNText>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  title: {
-    color: "#ffffff",
-    fontWeight: "bold",
-    letterSpacing: 2,
-    marginBottom: 4,
+  root: {
+    flex: 1,
+    backgroundColor: "#000000",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 12,
   },
   mascots: {
-    fontSize: 56,
-    marginVertical: 20,
+    fontSize: 52,
+    marginBottom: 16,
+  },
+  title: {
+    color: "#ffffff",
+    fontSize: 26,
+    fontWeight: "700",
+    letterSpacing: 3,
+    marginBottom: 4,
+  },
+  subtitle: {
+    color: "#8E8E93",
+    fontSize: 14,
+    letterSpacing: 0.5,
   },
   carrots: {
-    color: "#ec4899",
-    fontWeight: "bold",
-    marginBottom: 32,
-    letterSpacing: 1,
+    color: "#FF375F",
+    fontWeight: "700",
+    fontSize: 15,
+    letterSpacing: 1.5,
+    marginBottom: 36,
+    textAlign: "center",
+  },
+  form: {
+    width: "100%",
   },
   input: {
-    fontSize: 18,
+    backgroundColor: "#1C1C1E",
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    fontSize: 17,
     color: "#ffffff",
     width: "100%",
+    marginBottom: 12,
   },
   button: {
-    width: "100%",
-    backgroundColor: "#1e1e21",
-    borderRadius: 16,
-    paddingVertical: 14,
+    backgroundColor: "#1C1C1E",
+    borderRadius: 14,
+    paddingVertical: 16,
     alignItems: "center",
+    marginTop: 4,
     borderWidth: 1,
-    borderColor: "#3a3a46",
+    borderColor: "#3A3A3C",
+  },
+  buttonPressed: {
+    opacity: 0.7,
   },
   buttonText: {
     color: "#ffffff",
+    fontSize: 17,
+    fontWeight: "600",
   },
   github: {
-    fontSize: 28,
-    color: "#6b7280",
-    marginTop: 32,
+    color: "#636366",
+    fontSize: 16,
+    marginTop: 40,
   },
 })
 

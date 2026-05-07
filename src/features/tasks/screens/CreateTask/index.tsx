@@ -3,12 +3,20 @@ import { Box, Text } from "@/shared/utils/theme"
 import { useNavigation } from "@react-navigation/native"
 import { nanoid } from "nanoid/non-secure"
 import React, { useState } from "react"
-import { Pressable, ScrollView, StyleSheet, TextInput, Animated } from "react-native"
-import FormInput from "@/shared/components/FormInput"
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native"
 import CategoryPickerField from "../../components/CategoryPickerField"
-import { getColors } from "@/shared/utils/helpers"
 
-const COLORS = getColors()
+// iOS-system color swatches matching the wireframe
+const TASK_COLORS: IColor[] = [
+  { id: "c_pink",   code: "#FF375F", name: "systemPink" },
+  { id: "c_green",  code: "#30D158", name: "systemGreen" },
+  { id: "c_teal",   code: "#5AC8FA", name: "systemTeal" },
+  { id: "c_blue",   code: "#0A84FF", name: "systemBlue" },
+  { id: "c_purple", code: "#BF5AF2", name: "systemPurple" },
+  { id: "c_orange", code: "#FF9500", name: "systemOrange" },
+  { id: "c_yellow", code: "#FFD60A", name: "systemYellow" },
+]
+
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"]
 
 const CreateTask = () => {
@@ -53,55 +61,67 @@ const CreateTask = () => {
   }
 
   return (
-    <Box flex={1} bg="dark900">
-      <ScrollView contentContainerStyle={styles.scroll}>
+    <View style={styles.root}>
+      {/* Nav header */}
+      <View style={styles.navBar}>
+        <Text variant="textLg" style={styles.navTitle}>create a task</Text>
+        <Text style={styles.carrotIcon}>🥕</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         {/* Task name */}
-        <Text variant="textBase" color="gray200" mb="2">task name</Text>
-        <FormInput
+        <Text variant="textBase" style={styles.label}>task name</Text>
+        <TextInput
+          style={styles.input}
           placeholder="example - drink water!"
+          placeholderTextColor="#636366"
           value={newTask.name}
           onChangeText={(text) => setNewTask((prev) => ({ ...prev, name: text }))}
+          returnKeyType="done"
         />
 
         {/* Category */}
-        <Box mt="5">
+        <View style={styles.categoryWrap}>
           <CategoryPickerField
             categories={categories}
             selectedCategoryId={newTask.category_id}
             onValueChange={(id) => setNewTask((prev) => ({ ...prev, category_id: id }))}
           />
-        </Box>
+        </View>
 
         {/* Repeat days */}
-        <Text variant="textBase" color="gray200" mt="5" mb="2">repeat</Text>
-        <Box flexDirection="row" justifyContent="space-between">
+        <Text variant="textBase" style={styles.label}>repeat</Text>
+        <View style={styles.daysRow}>
           {DAYS.map((day, i) => {
             const selected = newTask.repeatDays?.includes(i)
             return (
               <Pressable
                 key={i}
                 onPress={() => toggleDay(i)}
-                style={[styles.dayCircle, selected ? styles.daySelected : styles.dayUnselected]}
+                style={[
+                  styles.dayCircle,
+                  selected ? styles.daySelected : styles.dayUnselected,
+                ]}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: selected }}
               >
-                <Text style={[styles.dayText, selected ? styles.dayTextSelected : undefined]}>
+                <Text style={[styles.dayText, selected && styles.dayTextSelected]}>
                   {day}
                 </Text>
               </Pressable>
             )
           })}
-        </Box>
+        </View>
 
         {/* Task color */}
-        <Text variant="textBase" color="gray200" mt="5" mb="2">task color</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {COLORS.filter((c) => !c.name.startsWith("dark") && !c.name.startsWith("gray") && !c.name.startsWith("white")).map((color) => (
+        <Text variant="textBase" style={styles.label}>task color</Text>
+        <View style={styles.colorRow}>
+          {TASK_COLORS.map((color) => (
             <Pressable
               key={color.id}
               onPress={() => setNewTask((prev) => ({ ...prev, color }))}
               style={[
-                styles.colorCircle,
+                styles.colorSwatch,
                 { backgroundColor: color.code },
                 newTask.color?.id === color.id && styles.colorSelected,
               ]}
@@ -109,102 +129,170 @@ const CreateTask = () => {
               accessibilityState={{ selected: newTask.color?.id === color.id }}
             />
           ))}
-        </ScrollView>
+        </View>
 
         {/* Sub tasks */}
-        <Text variant="textBase" color="gray200" mt="5" mb="2">add sub task</Text>
+        <Text variant="textBase" style={styles.label}>add sub task</Text>
         {(newTask.subTasks ?? []).map((sub, i) => (
-          <Text key={sub.id} variant="textBase" color="gray200" mb="1">
-            {i + 1} {sub.name}
+          <Text key={sub.id} style={styles.subTaskItem}>
+            {i + 1}  {sub.name}
           </Text>
         ))}
-        <Box flexDirection="row" alignItems="center" mt="2">
-          <Box flex={1} bg="dark700" borderRadius="rounded2Xl" px="4" py="3">
-            <TextInput
-              style={styles.subInput}
-              placeholder={`${(newTask.subTasks?.length ?? 0) + 1} thermoflask of water`}
-              placeholderTextColor="#6b7280"
-              value={subTaskInput}
-              onChangeText={setSubTaskInput}
-              onSubmitEditing={addSubTask}
-              returnKeyType="done"
-            />
-          </Box>
-        </Box>
+        <TextInput
+          style={[styles.input, styles.subInput]}
+          placeholder={`${(newTask.subTasks?.length ?? 0) + 1} thermoflask of water`}
+          placeholderTextColor="#636366"
+          value={subTaskInput}
+          onChangeText={setSubTaskInput}
+          onSubmitEditing={addSubTask}
+          returnKeyType="done"
+        />
+
+        <View style={styles.spacer} />
       </ScrollView>
 
-      {/* Create button */}
-      <Box px="4" pb="8">
+      {/* Bottom CTA */}
+      <View style={styles.footer}>
         <Pressable
           onPress={handleCreateTask}
-          style={styles.createBtn}
+          style={[styles.createBtn, showToast && styles.createBtnSuccess]}
           accessibilityRole="button"
           accessibilityLabel="Create task"
         >
-          <Text variant="textXl" style={styles.createBtnText}>
+          <Text style={[styles.createBtnText, showToast && styles.createBtnSuccessText]}>
             {showToast ? "task added !" : "create task"}
           </Text>
         </Pressable>
-      </Box>
-    </Box>
+      </View>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "#000000",
+  },
+  navBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 56,
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
+  navTitle: {
+    color: "#ffffff",
+    fontWeight: "600",
+    fontSize: 18,
+    letterSpacing: 0.4,
+  },
+  carrotIcon: {
+    fontSize: 24,
+  },
   scroll: {
-    padding: 16,
-    paddingBottom: 8,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  label: {
+    color: "#8E8E93",
+    fontSize: 13,
+    letterSpacing: 0.6,
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: "#1C1C1E",
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    fontSize: 17,
+    color: "#ffffff",
+  },
+  categoryWrap: {
+    marginTop: 20,
+  },
+  daysRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   dayCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    borderWidth: 2,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1.5,
   },
   dayUnselected: {
-    borderColor: "#3a3a46",
+    borderColor: "#3A3A3C",
     backgroundColor: "transparent",
   },
   daySelected: {
-    borderColor: "#ec4899",
-    backgroundColor: "#ec489933",
+    borderColor: "#FF375F",
+    backgroundColor: "#FF375F22",
   },
   dayText: {
-    color: "#9ca3af",
-    fontWeight: "bold",
-    fontSize: 14,
+    color: "#636366",
+    fontWeight: "600",
+    fontSize: 13,
   },
   dayTextSelected: {
-    color: "#ec4899",
+    color: "#FF375F",
   },
-  colorCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+  colorRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  colorSwatch: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     marginRight: 10,
+    marginBottom: 10,
   },
   colorSelected: {
     borderWidth: 3,
     borderColor: "#ffffff",
   },
   subInput: {
-    fontSize: 16,
-    color: "#ffffff",
-    width: "100%",
+    marginTop: 8,
+  },
+  subTaskItem: {
+    color: "#8E8E93",
+    fontSize: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  spacer: {
+    height: 20,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    paddingTop: 12,
+    backgroundColor: "#000000",
   },
   createBtn: {
-    backgroundColor: "#1e1e21",
-    borderRadius: 16,
-    paddingVertical: 14,
+    backgroundColor: "#1C1C1E",
+    borderRadius: 14,
+    paddingVertical: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ec4899",
+    borderColor: "#FF375F",
+  },
+  createBtnSuccess: {
+    borderColor: "#30D158",
+    backgroundColor: "#30D15820",
   },
   createBtnText: {
-    color: "#ec4899",
-    fontWeight: "bold",
+    color: "#FF375F",
+    fontWeight: "700",
+    fontSize: 17,
+    letterSpacing: 0.5,
+  },
+  createBtnSuccessText: {
+    color: "#30D158",
   },
 })
 

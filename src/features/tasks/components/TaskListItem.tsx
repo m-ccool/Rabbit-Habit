@@ -1,8 +1,8 @@
 import { Box, Text, Theme } from "@/shared/utils/theme"
 import { useTheme } from "@shopify/restyle"
 import React from "react"
-import { Pressable, StyleSheet } from "react-native"
-import { FontAwesome } from "@expo/vector-icons"
+import { Pressable, StyleSheet, View } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
 import useGlobalStore from "@/store"
 import { useNavigation } from "@react-navigation/native"
 
@@ -25,77 +25,139 @@ const TaskListItem = ({ task, overrideToggle }: TaskListItemProps) => {
     }
   }
 
+  const subTasks = task.subTasks ?? []
+  const completedSubs = subTasks.filter((s) => s.completed).length
+  const subProgress = subTasks.length > 0 ? completedSubs / subTasks.length : 0
+
   return (
-    <Box
-      bg="dark800"
-      borderRadius="rounded2Xl"
-      flex={1}
-      my="2"
-      mx="2"
-      style={{ borderLeftWidth: 4, borderLeftColor: accentColor }}
+    <Pressable
+      onLongPress={() => navigation.navigate("EditTask", { task })}
+      accessibilityRole="none"
+      style={styles.card}
     >
-      <Box p="4">
-        <Pressable
-          onPress={handleToggle}
-          onLongPress={() => navigation.navigate("EditTask", { task })}
-          accessibilityRole="checkbox"
-          accessibilityState={{ checked: task.completed }}
-          accessibilityLabel={task.name}
-        >
-          <Box flexDirection="row" alignItems="center">
-            <FontAwesome
-              name="square"
-              size={24}
-              color={task.completed ? theme.colors.green500 : theme.colors.gray200}
+      <View style={[styles.cardInner, { backgroundColor: theme.colors.dark800 }]}>
+        {/* Colored left accent bar */}
+        <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
+
+        <View style={styles.content}>
+          {/* Main task row */}
+          <Pressable
+            onPress={handleToggle}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: task.completed }}
+            accessibilityLabel={task.name}
+            style={styles.mainRow}
+          >
+            <Ionicons
+              name={task.completed ? "checkmark-circle" : "ellipse-outline"}
+              size={26}
+              color={task.completed ? theme.colors.systemGreen : theme.colors.gray200}
             />
             <Text
-              variant="textXl"
-              ml="4"
-              style={task.completed ? styles.completedText : undefined}
+              variant="textLg"
+              ml="3"
+              style={[
+                styles.taskName,
+                task.completed && styles.completedText,
+              ]}
             >
               {task.name}
             </Text>
-          </Box>
-        </Pressable>
+          </Pressable>
 
-        {/* Sub-tasks */}
-        {task.subTasks && task.subTasks.length > 0 && (
-          <Box mt="3" ml="4">
-            {task.subTasks.map((sub) => (
-              <Pressable
-                key={sub.id}
-                onPress={() => toggleSubTaskStatus(task.id, sub.id)}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: sub.completed }}
-                accessibilityLabel={sub.name}
-                style={styles.subTaskRow}
-              >
-                <FontAwesome
-                  name={sub.completed ? "check-square-o" : "square-o"}
-                  size={18}
-                  color={sub.completed ? theme.colors.green400 : theme.colors.gray200}
+          {/* Sub-task progress bar */}
+          {subTasks.length > 0 && (
+            <View style={styles.progressSection}>
+              <View style={[styles.progressTrack, { backgroundColor: theme.colors.dark600 }]}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${subProgress * 100}%` as any, backgroundColor: accentColor },
+                  ]}
                 />
-                <Text
-                  variant="textBase"
-                  ml="3"
-                  color="gray200"
-                  style={sub.completed ? styles.completedText : undefined}
+              </View>
+            </View>
+          )}
+
+          {/* Sub-tasks */}
+          {subTasks.length > 0 && (
+            <View style={styles.subTaskList}>
+              {subTasks.map((sub) => (
+                <Pressable
+                  key={sub.id}
+                  onPress={() => toggleSubTaskStatus(task.id, sub.id)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: sub.completed }}
+                  accessibilityLabel={sub.name}
+                  style={styles.subTaskRow}
                 >
-                  {sub.name}
-                </Text>
-              </Pressable>
-            ))}
-          </Box>
-        )}
-      </Box>
-    </Box>
+                  <Ionicons
+                    name={sub.completed ? "checkbox" : "square-outline"}
+                    size={18}
+                    color={sub.completed ? theme.colors.systemGreen : theme.colors.gray200}
+                  />
+                  <Text
+                    variant="textBase"
+                    ml="2"
+                    color="gray200"
+                    style={sub.completed ? styles.completedText : undefined}
+                  >
+                    {sub.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
+  card: {
+    marginHorizontal: 16,
+    marginVertical: 5,
+  },
+  cardInner: {
+    flexDirection: "row",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  accentBar: {
+    width: 4,
+  },
+  content: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+  },
+  mainRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  taskName: {
+    flex: 1,
+    fontWeight: "500",
+  },
   completedText: {
     textDecorationLine: "line-through",
-    opacity: 0.5,
+    opacity: 0.45,
+  },
+  progressSection: {
+    marginTop: 10,
+  },
+  progressTrack: {
+    height: 4,
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 2,
+  },
+  subTaskList: {
+    marginTop: 10,
   },
   subTaskRow: {
     flexDirection: "row",

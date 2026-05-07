@@ -19,23 +19,21 @@ const TaskList = ({ overrideToggle }: TaskListProps) => {
     return <TaskListSkeleton />
   }
 
-  if (!selectedCategory) {
-    return null
-  }
-
-  const tasksInCategory = tasks.filter(
-    (t) => t.category_id === selectedCategory.id
-  )
+  // Show tasks for the selected category, or all tasks when none is selected
+  const displayedTasks = selectedCategory
+    ? tasks.filter((t) => t.category_id === selectedCategory.id)
+    : tasks
 
   return (
     <Box flex={1}>
       <FlatList
-        data={tasksInCategory}
+        data={displayedTasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TaskListItem task={item} overrideToggle={overrideToggle} />
         )}
         ListEmptyComponent={<TaskListEmpty />}
+        contentContainerStyle={{ paddingBottom: 100 }}
       />
     </Box>
   )

@@ -117,7 +117,7 @@ const EditTask = () => {
         </Box>
         <Box
           mx="4"
-          bg="red500"
+          bg="dark700"
           width={"100%"}
           borderRadius="roundedXl"
           p="4"
