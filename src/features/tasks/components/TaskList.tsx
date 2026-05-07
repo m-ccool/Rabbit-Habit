@@ -7,11 +7,11 @@ import TaskListSkeleton from "./TaskListSkeleton"
 import useHydration from "@/shared/hooks/useHydration"
 import useGlobalStore from "@/store"
 
-/**
- * Pure FlatList rendering tasks for the currently selected category.
- * Shows a skeleton while persisted state is rehydrating.
- */
-const TaskList = () => {
+type TaskListProps = {
+  overrideToggle?: (task: ITask) => void
+}
+
+const TaskList = ({ overrideToggle }: TaskListProps) => {
   const hasHydrated = useHydration()
   const { tasks, selectedCategory } = useGlobalStore()
 
@@ -32,7 +32,9 @@ const TaskList = () => {
       <FlatList
         data={tasksInCategory}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <TaskListItem task={item} />}
+        renderItem={({ item }) => (
+          <TaskListItem task={item} overrideToggle={overrideToggle} />
+        )}
         ListEmptyComponent={<TaskListEmpty />}
       />
     </Box>

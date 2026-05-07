@@ -1,7 +1,5 @@
 export const textVariants = {
-  defaults: {
-    color: "#ffffff",
-  },
+  defaults: {},
   textBase: {
     fontSize: 16,
     lineHeight: 24,

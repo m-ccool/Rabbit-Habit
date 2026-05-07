@@ -31,6 +31,16 @@ export const palette = {
   dark800: "#1e1e21",
   dark700: "#2a2a2e",
   dark600: "#3a3a46",
+
+  // Light theme
+  light900: "#f9fafb",
+  light800: "#ffffff",
+  light700: "#f3f4f6",
+  light600: "#e5e7eb",
+
+  // Foreground tokens
+  foreground: "#ffffff",
+  foregroundLight: "#111827",
 }
 
 export const colors = {
@@ -54,4 +64,5 @@ export const colors = {
   dark800: palette.dark800,
   dark700: palette.dark700,
   dark600: palette.dark600,
+  foreground: palette.foreground,
 }
