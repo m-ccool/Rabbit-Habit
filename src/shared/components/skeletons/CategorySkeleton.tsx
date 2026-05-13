@@ -1,10 +1,24 @@
-import { ShimmerBox } from './ShimmerBox'
+import React from "react"
+import { StyleSheet, View } from "react-native"
+import { ShimmerBox } from "./ShimmerBox"
 
-export default function CategorySkeleton() {
+const CategorySkeleton = () => {
   return (
-    <div className="flex items-center gap-4 px-4 py-3">
-      <ShimmerBox className="w-8 h-8 rounded-full" />
-      <ShimmerBox className="flex-1 h-5" />
-    </div>
+    <View style={styles.row}>
+      <ShimmerBox style={{ width: 24, height: 24, borderRadius: 4 }} />
+      <ShimmerBox style={{ flex: 1, height: 20, marginLeft: 16, borderRadius: 8 }} />
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+})
+
+export default CategorySkeleton

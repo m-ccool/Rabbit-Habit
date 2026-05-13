@@ -1,0 +1,59 @@
+/*
+ * Rabbit-Habit design tokens mapped to Tailwind CSS custom properties.
+ * All hsl values are comma-separated (no "hsl()" wrapper) so Tailwind
+ * can compose opacity variants: e.g. bg-primary/50
+ *
+ * Original Restyle palette:
+ *   dark900 #f2f2f7  → background (light gray page bg)
+ *   dark800 #ffffff  → card (white surface)
+ *   dark700 #e5e5ea  → muted (subtle fill)
+ *   dark600 #d1d1d6  → border
+ *   gray900 #1c1c1e  → foreground (near-black text)
+ *   gray200 #aeaeb2  → muted-foreground (placeholder / secondary text)
+ *   blu500  #007aff  → primary (iOS blue CTA)
+ *   blu200  #d0e8ff  → primary-foreground (text on primary)
+ *   pink500 #ff2d55  → accent (FAB, highlights)
+ *   red500  #ff3b30  → destructive (delete)
+ *   green500 #30d158 → success (completed task)
+ *   amber400 #ffcc00 → amber (warnings)
+ */
+:root {
+  --background: 240 67% 97%;        /* #f2f2f7 */
+  --card: 0 0% 100%;                /* #ffffff */
+  --muted: 240 14% 91%;             /* #e5e5ea */
+  --border: 240 9% 83%;             /* #d1d1d6 */
+
+  --foreground: 240 5% 11%;         /* #1c1c1e */
+  --muted-foreground: 240 3% 69%;   /* #aeaeb2 */
+
+  --primary: 211 100% 50%;          /* #007aff */
+  --primary-foreground: 211 100% 91%; /* #d0e8ff */
+
+  --accent: 344 100% 59%;           /* #ff2d55 */
+  --accent-foreground: 0 0% 100%;   /* white */
+
+  --destructive: 3 100% 59%;        /* #ff3b30 */
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 142 62% 51%;           /* #30d158 */
+  --amber: 48 100% 50%;             /* #ffcc00 */
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}

@@ -1,11 +1,17 @@
-import CategorySkeleton from '@/shared/components/skeletons/CategorySkeleton'
+import React from "react"
+import { View } from "react-native"
+import CategorySkeleton from "@/shared/components/skeletons/CategorySkeleton"
 
-export default function CategoryListSkeleton() {
+const SKELETON_COUNT = 4
+
+const CategoryListSkeleton = () => {
   return (
-    <div className="flex flex-col gap-1">
-      {[...Array(4)].map((_, i) => (
+    <View style={{ flex: 1 }}>
+      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
         <CategorySkeleton key={i} />
       ))}
-    </div>
+    </View>
   )
 }
+
+export default CategoryListSkeleton

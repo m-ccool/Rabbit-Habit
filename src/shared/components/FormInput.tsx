@@ -1,23 +1,37 @@
-import { InputHTMLAttributes } from 'react'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import React from "react"
+import { StyleSheet, TextInput, TextInputProps } from "react-native"
+import { Box, Text } from "@/shared/utils/theme"
 
-interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface FormInputProps extends TextInputProps {
   label?: string
-  error?: string
 }
 
-export default function FormInput({ label, error, className, ...rest }: FormInputProps) {
+/**
+ * Shared styled text input used across create/edit screens.
+ */
+const FormInput = ({ label, style, ...rest }: FormInputProps) => {
   return (
-    <div className="w-full flex flex-col gap-2">
+    <Box width="100%">
       {label ? (
-        <label className="text-white text-base font-medium">{label}</label>
+        <Text variant="textBase" mb="2">{label}</Text>
       ) : null}
-      <Input className={cn(className)} {...rest} />
-      {error ? (
-        <p className="text-[#FF453A] text-sm">{error}</p>
-      ) : null}
-    </div>
+      <Box width="100%" bg="dark700" borderRadius="rounded2Xl" px="4" py="4">
+        <TextInput
+          placeholderTextColor="#aeaeb2"
+          style={[styles.input, style]}
+          {...rest}
+        />
+      </Box>
+    </Box>
   )
 }
 
+const styles = StyleSheet.create({
+  input: {
+    width: "100%",
+    fontSize: 20,
+    color: "#ffffff",
+  },
+})
+
+export default FormInput

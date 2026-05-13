@@ -1,14 +1,30 @@
-import { ShimmerBox } from './ShimmerBox'
+import React from "react"
+import { StyleSheet, View } from "react-native"
+import { ShimmerBox } from "./ShimmerBox"
 
-export default function TaskSkeleton() {
+const TaskSkeleton = () => {
   return (
-    <div className="mx-4 my-1.5">
-      <div className="bg-[#1C1C1E] rounded-[16px] p-4">
-        <div className="flex items-center gap-3">
-          <ShimmerBox className="w-7 h-7 rounded-full" />
-          <ShimmerBox className="flex-1 h-5" />
-        </div>
-      </div>
-    </div>
+    <View style={styles.card}>
+      <View style={styles.row}>
+        <ShimmerBox style={{ width: 24, height: 24, borderRadius: 4 }} />
+        <ShimmerBox style={{ flex: 1, height: 20, marginLeft: 16, borderRadius: 8 }} />
+      </View>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#1C1C1E",
+    borderRadius: 16,
+    marginVertical: 8,
+    marginHorizontal: 8,
+    padding: 16,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+})
+
+export default TaskSkeleton

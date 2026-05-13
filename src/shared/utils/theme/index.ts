@@ -35,6 +35,13 @@ export const darkTheme = createTheme({
   },
 })
 
+export const COLORS = {
+  ...colors,
+  card: colors.dark800,
+  muted: colors.dark700,
+  border: colors.separator,
+}
+
 export const lightTheme = createTheme({
   ...baseTheme,
   colors: {

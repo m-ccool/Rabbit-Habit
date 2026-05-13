@@ -24,9 +24,21 @@ const stackScreenOptions = {
 const MainStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
     <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-    <Stack.Screen name="CreateTask" component={CreateTask} options={{ title: "create a task" }} />
-    <Stack.Screen name="EditTask" component={EditTask} options={{ title: "edit task" }} />
-    <Stack.Screen name="CreateCategory" component={CreateCategory} options={{ title: "create a category" }} />
+    <Stack.Screen
+      name="CreateTask"
+      component={CreateTask}
+      options={{ title: "create a task", presentation: "modal" }}
+    />
+    <Stack.Screen
+      name="EditTask"
+      component={EditTask}
+      options={{ title: "edit task", presentation: "modal" }}
+    />
+    <Stack.Screen
+      name="CreateCategory"
+      component={CreateCategory}
+      options={{ title: "create a category", presentation: "modal" }}
+    />
     <Stack.Screen name="CarrotCollection" component={CarrotCollection} options={{ title: "carrot collection" }} />
   </Stack.Navigator>
 )

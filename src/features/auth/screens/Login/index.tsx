@@ -1,139 +1,186 @@
+import FormInput from "@/shared/components/FormInput"
+import useHydration from "@/shared/hooks/useHydration"
 import useGlobalStore from "@/store"
-import React, { useState } from "react"
-import { Pressable, StyleSheet, TextInput, View, Text as RNText } from "react-native"
+import { Box, Text } from "@/shared/utils/theme"
+import React, { useMemo, useState } from "react"
+import { Modal, TouchableOpacity } from "react-native"
 
-const Login = () => {
-  const { login } = useGlobalStore()
+type AuthMode = "login" | "create"
+
+const DEV_EMAIL = "test@test.com"
+const DEV_PASSWORD = "test"
+
+export default function Login() {
+  const { login, registerUser } = useGlobalStore()
+  const hasHydrated = useHydration()
+  const [mode, setMode] = useState<AuthMode>("login")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
 
-  const handleLogin = () => {
-    if (!email.trim() || !password.trim()) return
-    login(email.trim())
+  const actionLabel = useMemo(
+    () => (mode === "login" ? "Log In" : "Create Account"),
+    [mode]
+  )
+
+  const validate = () => {
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required.")
+      return false
+    }
+
+    if (mode === "create" && password !== confirmPassword) {
+      setError("Passwords do not match.")
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = () => {
+    setError("")
+    if (!validate()) return
+
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (mode === "create") {
+      const created = registerUser(normalizedEmail, password)
+      if (!created) {
+        setError("An account with that email already exists.")
+        return
+      }
+    }
+
+    const signedIn = login(normalizedEmail, password)
+    if (!signedIn) {
+      setError(
+        __DEV__
+          ? "Use test@test.com / test or create a local account first."
+          : "Invalid credentials."
+      )
+      return
+    }
+  }
+
+  if (!hasHydrated) {
+    return <Box flex={1} bg="dark900" />
   }
 
   return (
-    <View style={styles.root}>
-      {/* Logo + title */}
-      <View style={styles.header}>
-        <RNText style={styles.mascots}>🥕 🐇</RNText>
-        <RNText style={styles.title}>RABBIT HABIT</RNText>
-        <RNText style={styles.subtitle}>habit tracker</RNText>
-      </View>
-
-      {/* Community stat */}
-      <RNText style={styles.carrots}>34,234 CARROTS GROWN</RNText>
-
-      {/* Form */}
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="email@test.com"
-          placeholderTextColor="#636366"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          autoComplete="email"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="password"
-          placeholderTextColor="#636366"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          textContentType="password"
-          autoComplete="password"
-        />
-
-        <Pressable
-          onPress={handleLogin}
-          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-          accessibilityRole="button"
+    <Box flex={1} bg="dark900" justifyContent="center" px="5">
+      <Modal transparent visible animationType="fade" statusBarTranslucent>
+        <Box
+          flex={1}
+          justifyContent="center"
+          alignItems="center"
+          px="4"
+          bg="dark900"
         >
-          <RNText style={styles.buttonText}>log in</RNText>
-        </Pressable>
-      </View>
+          <Box width="100%" maxWidth={420} bg="dark800" borderRadius="rounded4Xl" p="5">
+            <Box alignItems="center" mb="4">
+              <Text variant="text4Xl">🥕 🐇</Text>
+              <Text variant="text2Xl" mt="2">
+                Rabbit Habit
+              </Text>
+              <Text variant="textBase" color="gray200" mt="2" textAlign="center">
+                {mode === "login"
+                  ? "Welcome back. Sign in to continue."
+                  : "Create an account to enter the app."}
+              </Text>
+            </Box>
 
-      {/* Footer */}
-      <RNText style={styles.github}>⬡  github</RNText>
-    </View>
+            <Box gap="3">
+              <FormInput
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="email@test.com"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                autoComplete="email"
+              />
+
+              <FormInput
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="password"
+                secureTextEntry
+                textContentType="password"
+                autoComplete="password"
+              />
+
+              {mode === "create" ? (
+                <FormInput
+                  label="Confirm Password"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="confirm password"
+                  secureTextEntry
+                  textContentType="password"
+                  autoComplete="password"
+                />
+              ) : null}
+            </Box>
+
+            {error ? (
+              <Text variant="textBase" color="systemRed" mt="3">
+                {error}
+              </Text>
+            ) : null}
+
+            <TouchableOpacity
+              onPress={handleSubmit}
+              accessibilityRole="button"
+              accessibilityLabel={actionLabel}
+              activeOpacity={0.85}
+            >
+              <Box
+                mt="4"
+                py="4"
+                borderRadius="rounded2Xl"
+                bg="systemPink"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Text variant="textLg">{actionLabel}</Text>
+              </Box>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setMode(mode === "login" ? "create" : "login")
+                setError("")
+                setPassword("")
+                setConfirmPassword("")
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={
+                mode === "login" ? "Switch to create account" : "Switch to login"
+              }
+              activeOpacity={0.75}
+            >
+              <Box mt="3" alignItems="center">
+                <Text variant="textBase" color="gray200">
+                  {mode === "login"
+                    ? "Need an account? Create one"
+                    : "Already have an account? Log in"}
+                </Text>
+              </Box>
+            </TouchableOpacity>
+
+            {__DEV__ ? (
+              <Box mt="4" p="3" borderRadius="roundedXl" bg="dark700">
+                <Text variant="textBase" color="gray200" textAlign="center">
+                  Dev mode enabled: use test@test.com / test to log in instantly.
+                </Text>
+              </Box>
+            ) : null}
+          </Box>
+        </Box>
+      </Modal>
+    </Box>
   )
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: "#000000",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 32,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  mascots: {
-    fontSize: 52,
-    marginBottom: 16,
-  },
-  title: {
-    color: "#ffffff",
-    fontSize: 26,
-    fontWeight: "700",
-    letterSpacing: 3,
-    marginBottom: 4,
-  },
-  subtitle: {
-    color: "#8E8E93",
-    fontSize: 14,
-    letterSpacing: 0.5,
-  },
-  carrots: {
-    color: "#FF375F",
-    fontWeight: "700",
-    fontSize: 15,
-    letterSpacing: 1.5,
-    marginBottom: 36,
-    textAlign: "center",
-  },
-  form: {
-    width: "100%",
-  },
-  input: {
-    backgroundColor: "#1C1C1E",
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-    fontSize: 17,
-    color: "#ffffff",
-    width: "100%",
-    marginBottom: 12,
-  },
-  button: {
-    backgroundColor: "#1C1C1E",
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: "center",
-    marginTop: 4,
-    borderWidth: 1,
-    borderColor: "#3A3A3C",
-  },
-  buttonPressed: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 17,
-    fontWeight: "600",
-  },
-  github: {
-    color: "#636366",
-    fontSize: 16,
-    marginTop: 40,
-  },
-})
-
-export default Login

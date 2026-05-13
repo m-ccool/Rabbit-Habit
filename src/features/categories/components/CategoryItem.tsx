@@ -1,50 +1,48 @@
-import { Trash2 } from 'lucide-react'
-import { useAppState, useAppDispatch } from '@/context'
-import { cn } from '@/lib/utils'
+import useGlobalStore from "@/store"
+import { Box, Text } from "@/shared/utils/theme"
+import { FontAwesome } from "@expo/vector-icons"
+import { BottomSheetModal } from "@gorhom/bottom-sheet"
+import React, { RefObject } from "react"
+import { Pressable } from "react-native"
 
-interface CategoryItemProps {
+type CategoryItemProps = {
   category: ICategory
   index: number
-  onSelect?: () => void
+  bottomSheetRef: RefObject<BottomSheetModal>
 }
 
-export default function CategoryItem({ category, index, onSelect }: CategoryItemProps) {
-  const { selectedCategory } = useAppState()
-  const dispatch = useAppDispatch()
+const CategoryItem = ({ bottomSheetRef, category }: CategoryItemProps) => {
+  const { updateSelectedCategory, selectedCategory } = useGlobalStore()
+
+  const onSelect = () => {
+    updateSelectedCategory(category)
+    bottomSheetRef.current?.close()
+  }
+
   const isSelected = selectedCategory?.id === category.id
 
-  const handleSelect = () => {
-    dispatch({ type: 'categories/select', payload: isSelected ? null : category })
-    onSelect?.()
-  }
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    dispatch({ type: 'categories/delete', payload: category.id })
-  }
-
   return (
-    <button
-      onClick={handleSelect}
-      className={cn(
-        'flex items-center justify-between gap-3 w-full px-3 py-3 rounded-[14px] min-h-[44px] transition-all active:scale-[0.98]',
-        isSelected ? 'bg-[#3A3A3C]' : 'hover:bg-[#2C2C2E]'
-      )}
+    <Pressable
+      onPress={onSelect}
+      accessibilityRole="button"
+      accessibilityLabel={`Select category ${category.name}`}
+      style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
     >
-      <div className="flex items-center gap-3">
-        <div
-          className="w-4 h-4 rounded-full shrink-0"
-          style={{ backgroundColor: category.color.code || '#636366' }}
-        />
-        <span className="text-white text-base">{category.name}</span>
-      </div>
-      <button
-        onClick={handleDelete}
-        className="min-h-[44px] min-w-[44px] flex items-center justify-center text-[#636366] hover:text-[#FF453A] active:scale-95 transition-all"
-        aria-label={`Delete ${category.name}`}
+      <Box
+        p="4"
+        borderRadius="rounded2Xl"
+        flexDirection="row"
+        alignItems="center"
+        mb="2"
+        bg={isSelected ? "dark600" : "dark800"}
+        borderWidth={1}
+        borderColor="separator"
       >
-        <Trash2 size={16} />
-      </button>
-    </button>
+        <FontAwesome name="square-o" size={24} color={category.color.code} />
+        <Text variant="textXl" ml="4">{category.name}</Text>
+      </Box>
+    </Pressable>
   )
 }
+
+export default CategoryItem

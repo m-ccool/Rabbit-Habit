@@ -3,6 +3,18 @@ import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { nanoid } from "nanoid/non-secure"
 
+type AuthUser = {
+  email: string
+  password: string
+}
+
+export type ShellModule = "tasks" | "categories" | "rewards" | "profile"
+
+const DEV_AUTH_USER: AuthUser = {
+  email: "test@test.com",
+  password: "test",
+}
+
 const SEED_BADGES: IBadge[] = [
   { id: "endure", name: "endure", description: "complete 5 tasks a day, 2 months", icon: "⚡", unlocked: false },
   { id: "valor", name: "valor", description: "plan tasks ahead on 100 days", icon: "🐇", unlocked: false },
@@ -16,10 +28,12 @@ interface IGlobalStore {
   tasks: ITask[]
   selectedCategory: null | ICategory
   user: IUser | null
+  authUsers: AuthUser[]
   carrots: number
   badges: IBadge[]
   themeMode: "dark" | "light"
   lastGeneratedDate: string
+  activeShellModule: ShellModule
 
   // ── loading flags ─────────────────────────────────────────────────────────
   _hasHydrated: boolean
@@ -30,6 +44,7 @@ interface IGlobalStore {
   setHasHydrated: (val: boolean) => void
   setIsCreatingTask: (val: boolean) => void
   setIsDeletingTask: (val: boolean) => void
+  setActiveShellModule: (module: ShellModule) => void
 
   addTask: (task: ITask) => void
   updateTasks: (tasks: ITask[]) => void
@@ -41,12 +56,18 @@ interface IGlobalStore {
   deleteCategory: (categoryId: string) => void
   updateSelectedCategory: (category: ICategory) => void
 
-  login: (username: string) => void
+  login: (email: string, password: string) => boolean
+  registerUser: (email: string, password: string) => boolean
   logout: () => void
   addCarrots: (count: number) => void
   toggleTheme: () => void
   generateRecurringTasks: () => void
   checkBadges: () => void
+
+  // ── streak ────────────────────────────────────────────────────────────────
+  currentStreak: number
+  lastCompletionDate: string | null // ISO date "YYYY-MM-DD"
+  checkAndUpdateStreak: () => void
 }
 
 const useGlobalStore = create<IGlobalStore>()(
@@ -57,10 +78,14 @@ const useGlobalStore = create<IGlobalStore>()(
       tasks: [],
       selectedCategory: null,
       user: null,
+      authUsers: [DEV_AUTH_USER],
       carrots: 0,
       badges: SEED_BADGES,
       themeMode: "dark",
       lastGeneratedDate: "",
+      activeShellModule: "tasks",
+      currentStreak: 0,
+      lastCompletionDate: null,
       _hasHydrated: false,
       isCreatingTask: false,
       isDeletingTask: false,
@@ -69,9 +94,33 @@ const useGlobalStore = create<IGlobalStore>()(
       setHasHydrated: (val) => set({ _hasHydrated: val }),
       setIsCreatingTask: (val) => set({ isCreatingTask: val }),
       setIsDeletingTask: (val) => set({ isDeletingTask: val }),
+      setActiveShellModule: (module) => set({ activeShellModule: module }),
 
       // ── auth actions ──────────────────────────────────────────────────────
-      login: (username) => set({ user: { username, isLoggedIn: true } }),
+      login: (email, password) => {
+        const normalizedEmail = email.trim().toLowerCase()
+        const matchedUser = get().authUsers.find(
+          (user) => user.email === normalizedEmail && user.password === password
+        )
+
+        if (!matchedUser) return false
+
+        set({ user: { username: matchedUser.email, isLoggedIn: true } })
+        return true
+      },
+
+      registerUser: (email, password) => {
+        const normalizedEmail = email.trim().toLowerCase()
+        if (!normalizedEmail || !password.trim()) return false
+
+        const { authUsers } = get()
+        const alreadyExists = authUsers.some((user) => user.email === normalizedEmail)
+        if (alreadyExists) return false
+
+        set({ authUsers: [...authUsers, { email: normalizedEmail, password }] })
+        return true
+      },
+
       logout: () => set({ user: null }),
 
       // ── carrot & theme actions ─────────────────────────────────────────────
@@ -187,21 +236,39 @@ const useGlobalStore = create<IGlobalStore>()(
         }
         set({ tasks: [...tasks, ...newInstances], lastGeneratedDate: todayStr })
       },
+
+      // ── streak actions ────────────────────────────────────────────────────
+      checkAndUpdateStreak: () => {
+        const { lastCompletionDate, currentStreak } = get()
+        const today = new Date().toISOString().slice(0, 10)
+        if (lastCompletionDate === today) return // already updated today
+
+        const yesterday = new Date(Date.now() - 86400000)
+          .toISOString()
+          .slice(0, 10)
+        const newStreak =
+          lastCompletionDate === yesterday ? currentStreak + 1 : 1
+        set({ currentStreak: newStreak, lastCompletionDate: today })
+      },
     }),
     {
       name: "todos-store",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
+      version: 4,
       migrate: (persistedState: any, version) => {
         if (version < 2) {
-          return {
-            ...persistedState,
-            user: null,
-            carrots: 0,
-            badges: SEED_BADGES,
-            themeMode: "dark",
-            lastGeneratedDate: "",
-          }
+          persistedState.user = null
+          persistedState.carrots = 0
+          persistedState.badges = SEED_BADGES
+          persistedState.themeMode = "dark"
+          persistedState.lastGeneratedDate = ""
+        }
+        if (version < 3) {
+          persistedState.currentStreak = 0
+          persistedState.lastCompletionDate = null
+        }
+        if (version < 4) {
+          persistedState.authUsers = [DEV_AUTH_USER]
         }
         return persistedState as IGlobalStore
       },

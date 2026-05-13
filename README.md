@@ -1,4 +1,7 @@
 # Rabbit Habit
+
+**🐇 Live App → [https://m-ccool.github.io/Rabbit-Habit/](https://m-ccool.github.io/Rabbit-Habit/)**
+
 Rabbit Habit habit tracking Progressive Web Application.
 
 ## Table of Contents
@@ -20,9 +23,21 @@ Rabbit Habit habit tracking Progressive Web Application.
 
 ## Installation
 
+```bash
+npm install
+```
+
 ## Usage
 
 ### Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start Expo dev server |
+| `npm run web` | Web preview |
+| `npm run build:web` | Production web build (outputs to `/web-build/`) |
+| `npm run android` | Android preview |
+| `npm run ios` | iOS preview |
 
 ## Guidelines
 

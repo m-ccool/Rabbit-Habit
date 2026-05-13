@@ -1,65 +1,68 @@
-import { useNavigate } from 'react-router-dom'
-import { Plus } from 'lucide-react'
-import { useAppState, useAppDispatch } from '@/context'
-import CategoryItem from './CategoryItem'
-import CategoryListSkeleton from './CategoryListSkeleton'
-import useHydration from '@/shared/hooks/useHydration'
+import { BottomSheetModal } from "@gorhom/bottom-sheet"
+import { useNavigation } from "@react-navigation/native"
+import React, { RefObject } from "react"
+import { FlatList, Pressable } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
+import CategoryItem from "./CategoryItem"
+import CategoryListSkeleton from "./CategoryListSkeleton"
+import useGlobalStore from "@/store"
+import useHydration from "@/shared/hooks/useHydration"
+import { Box } from "@/shared/utils/theme"
 
-interface CategoryFilterSheetProps {
-  isOpen: boolean
-  onClose: () => void
+type CategoryFilterSheetProps = {
+  bottomSheetRef: RefObject<BottomSheetModal>
 }
 
-export default function CategoryFilterSheet({ isOpen, onClose }: CategoryFilterSheetProps) {
-  const navigate = useNavigate()
-  const { categories } = useAppState()
-  const dispatch = useAppDispatch()
+const CategoryFilterSheet = ({ bottomSheetRef }: CategoryFilterSheetProps) => {
+  const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
+  const { categories } = useGlobalStore()
   const hasHydrated = useHydration()
 
-  const handleShowAll = () => {
-    dispatch({ type: 'categories/select', payload: null })
-    onClose()
-  }
-
   return (
-    <div className="pb-4">
+    <Box flex={1} mx="4">
       {hasHydrated ? (
-        <>
-          {/* Show all button */}
-          <button
-            onClick={handleShowAll}
-            className="w-full flex items-center gap-3 px-2 py-3 text-[#8E8E93] hover:text-white text-base min-h-[44px] active:scale-[0.98] transition-transform"
-          >
-            <span className="text-lg">🐇</span>
-            <span>all tasks</span>
-          </button>
-
-          <div className="flex flex-col gap-1">
-            {categories.map((cat, index) => (
-              <CategoryItem
-                key={cat.id}
-                index={index}
-                category={cat}
-                onSelect={onClose}
-              />
-            ))}
-          </div>
-
-          {/* Add category */}
-          <button
-            onClick={() => {
-              onClose()
-              navigate('/categories/create')
-            }}
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-[14px] min-h-[44px] font-medium active:scale-95 transition-all"
-          >
-            <Plus size={18} />
-            new category
-          </button>
-        </>
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <CategoryItem
+              key={item.id}
+              index={index}
+              category={item}
+              bottomSheetRef={bottomSheetRef}
+            />
+          )}
+        />
       ) : (
         <CategoryListSkeleton />
       )}
-    </div>
+
+      <Box position="absolute" right={20} style={{ bottom: insets.bottom }}>
+        <Pressable
+          onPress={() => {
+            bottomSheetRef.current?.close()
+            navigation.navigate("CreateCategory")
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Add category"
+          style={({ pressed }) => [{ opacity: pressed ? 0.84 : 1 }]}
+        >
+          <Box
+            bg="dark600"
+            width={64}
+            height={64}
+            borderRadius="roundedFull"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <MaterialCommunityIcons name="plus" size={40} color="#ffffff" />
+          </Box>
+        </Pressable>
+      </Box>
+    </Box>
   )
 }
+
+export default CategoryFilterSheet
