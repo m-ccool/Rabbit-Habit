@@ -1,5 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react"
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import React, { Component, ErrorInfo, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
@@ -11,10 +10,6 @@ interface State {
   error: Error | null
 }
 
-/**
- * Error boundary that catches rendering errors (including corrupt persisted
- * state) and shows a friendly recovery screen instead of a crash.
- */
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -26,7 +21,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("[ErrorBoundary]", error, info)
+    console.error('[ErrorBoundary]', error, info)
   }
 
   handleReset = () => {
@@ -35,48 +30,27 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback
-      }
+      if (this.props.fallback) return this.props.fallback
       return (
-        <View style={styles.container}>
-          <Text style={styles.title}>Something went wrong</Text>
-          <Text style={styles.message}>
-            {this.state.error?.message ?? "An unexpected error occurred."}
-          </Text>
-          <TouchableOpacity style={styles.button} onPress={this.handleReset}>
-            <Text style={styles.buttonText}>Try Again</Text>
-          </TouchableOpacity>
-        </View>
+        <div className="flex flex-col items-center justify-center h-screen bg-black px-8 gap-6 text-center">
+          <span className="text-6xl">🐇</span>
+          <h2 className="text-white text-2xl font-bold">Something went wrong</h2>
+          <p className="text-[#8E8E93] text-sm">{this.state.error?.message}</p>
+          <button
+            onClick={this.handleReset}
+            className="bg-[#FF375F] text-white px-6 py-3 rounded-squircle min-h-[44px] font-medium active:scale-95 transition-transform"
+          >
+            Try again
+          </button>
+        </div>
       )
     }
-
     return this.props.children
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-    backgroundColor: "#111113",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#ffffff",
-    marginBottom: 8,
-  },
-  message: {
-    fontSize: 16,
-    color: "#9ca3af",
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  button: {
-    backgroundColor: "#3b82f6",
+export default ErrorBoundary
+
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 16,

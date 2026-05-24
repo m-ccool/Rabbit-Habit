@@ -1,21 +1,11 @@
-import React from "react"
-import { StyleSheet, View } from "react-native"
-import CategorySkeleton from "@/shared/components/skeletons/CategorySkeleton"
+import CategorySkeleton from '@/shared/components/skeletons/CategorySkeleton'
 
-const SKELETON_COUNT = 4
-
-const CategoryListSkeleton = () => {
+export default function CategoryListSkeleton() {
   return (
-    <View style={styles.container}>
-      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+    <div className="flex flex-col gap-1">
+      {[...Array(4)].map((_, i) => (
         <CategorySkeleton key={i} />
       ))}
-    </View>
+    </div>
   )
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-})
-
-export default CategoryListSkeleton

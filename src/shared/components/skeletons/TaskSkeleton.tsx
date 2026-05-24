@@ -1,46 +1,14 @@
-import React from "react"
-import { StyleSheet, View } from "react-native"
-import { ShimmerBox } from "./ShimmerBox"
+import { ShimmerBox } from './ShimmerBox'
 
-/**
- * Skeleton placeholder that mirrors the real Task card layout.
- * Card: white bg, 16px border-radius, my=8 mx=8, padding=16
- * Row: icon (24x24) + text line
- */
-const TaskSkeleton = () => {
+export default function TaskSkeleton() {
   return (
-    <View style={styles.card}>
-      <View style={styles.row}>
-        <ShimmerBox style={styles.icon} />
-        <ShimmerBox style={styles.text} />
-      </View>
-    </View>
+    <div className="mx-4 my-1.5">
+      <div className="bg-[#1C1C1E] rounded-[16px] p-4">
+        <div className="flex items-center gap-3">
+          <ShimmerBox className="w-7 h-7 rounded-full" />
+          <ShimmerBox className="flex-1 h-5" />
+        </div>
+      </div>
+    </div>
   )
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#1e1e21",
-    borderRadius: 16,
-    marginVertical: 8,
-    marginHorizontal: 8,
-    padding: 16,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-  },
-  text: {
-    flex: 1,
-    height: 20,
-    marginLeft: 16,
-    borderRadius: 8,
-  },
-})
-
-export default TaskSkeleton

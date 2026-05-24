@@ -1,11 +1,5 @@
-import useGlobalStore from "@/store"
+import { useAppState } from '@/context'
 
-/**
- * Returns true once Zustand has finished rehydrating persisted state
- * from AsyncStorage on app cold start.
- */
-const useHydration = () => {
-  return useGlobalStore((state) => state._hasHydrated)
+export default function useHydration() {
+  return useAppState()._hasHydrated
 }
-
-export default useHydration

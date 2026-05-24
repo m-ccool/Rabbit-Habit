@@ -1,39 +1,10 @@
-import React from "react"
-import { StyleSheet, View } from "react-native"
-import { ShimmerBox } from "./ShimmerBox"
+import { ShimmerBox } from './ShimmerBox'
 
-/**
- * Skeleton placeholder that mirrors the real Category row layout.
- * Row: p=16, borderRadius=8, icon (24x24) + text label
- */
-const CategorySkeleton = () => {
+export default function CategorySkeleton() {
   return (
-    <View style={styles.row}>
-      <ShimmerBox style={styles.icon} />
-      <ShimmerBox style={styles.text} />
-    </View>
+    <div className="flex items-center gap-4 px-4 py-3">
+      <ShimmerBox className="w-8 h-8 rounded-full" />
+      <ShimmerBox className="flex-1 h-5" />
+    </div>
   )
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 4,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-  },
-  text: {
-    flex: 1,
-    height: 20,
-    marginLeft: 16,
-    borderRadius: 8,
-  },
-})
-
-export default CategorySkeleton
