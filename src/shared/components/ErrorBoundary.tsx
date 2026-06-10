@@ -50,16 +50,3 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary
-
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 16,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-})
-
-export default ErrorBoundary
